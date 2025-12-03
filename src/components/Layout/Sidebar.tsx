@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSlicer } from '../../context/SlicerContext';
 import { Input } from '../UI/Input';
 import { Button } from '../UI/Button';
-import { Settings, Type, Grid3X3, ArrowDown01, ArrowRightLeft, Wand2, Loader2, Minus, Plus } from 'lucide-react';
+import { Settings, Type, Grid3X3, ArrowDown01, ArrowRightLeft, Wand2, Loader2, Minus, Plus, Upload } from 'lucide-react';
 import { SortMode } from '../../types';
 import { detectGrid } from '../../utils/imageAnalysis';
 
@@ -53,7 +53,7 @@ const NumberInput = ({
 );
 
 export const Sidebar: React.FC = () => {
-  const { settings, updateSettings, file, t } = useSlicer();
+  const { settings, updateSettings, file, setFile, t } = useSlicer();
   const [isDetecting, setIsDetecting] = useState(false);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -76,6 +76,32 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside className="w-80 border-r border-border bg-surface/50 flex flex-col shrink-0 overflow-y-auto">
+      {/* Persistent Drop Zone */}
+      <div className="p-4 border-b border-border">
+        <div 
+          className="border-2 border-dashed border-border hover:border-primary/50 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer transition-colors bg-surface/30 hover:bg-surface group"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) setFile(files[0]);
+          }}
+          onClick={() => document.getElementById('sidebar-upload')?.click()}
+        >
+          <input 
+            id="sidebar-upload"
+            type="file" 
+            className="hidden" 
+            accept="image/*"
+            onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])}
+          />
+          <Upload className="w-6 h-6 text-gray-400 group-hover:text-primary mb-2 transition-colors" />
+          <span className="text-xs text-gray-400 group-hover:text-gray-200 text-center transition-colors">
+            {file ? t('dropzone.select') : t('dropzone.drag')}
+          </span>
+        </div>
+      </div>
+
       <div className="p-4 border-b border-border">
         <h2 className="flex items-center gap-2 font-medium text-gray-200">
           <Settings className="w-4 h-4" />

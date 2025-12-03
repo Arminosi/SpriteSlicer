@@ -14,6 +14,7 @@ const MainContent: React.FC = () => {
   const { file, settings, addToHistory, setFile, t, cells } = useSlicer();
   const [isSlicing, setIsSlicing] = useState(false);
   const [viewMode, setViewMode] = useState<'preview' | 'sort'>('preview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleSlice = async () => {

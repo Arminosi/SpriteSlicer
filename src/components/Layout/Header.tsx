@@ -1,9 +1,14 @@
 import React from 'react';
-import { Scissors, Languages } from 'lucide-react';
+import { Scissors, Languages, PanelLeft } from 'lucide-react';
 import { useSlicer } from '../../context/SlicerContext';
 import { Button } from '../UI/Button';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ isSidebarOpen, onToggleSidebar }) => {
   const { language, setLanguage, t } = useSlicer();
 
   const toggleLanguage = () => {
@@ -12,11 +17,23 @@ export const Header: React.FC = () => {
 
   return (
     <header className="h-14 border-b border-border bg-background/50 backdrop-blur-sm flex items-center px-4 justify-between shrink-0 z-10">
-      <div className="flex items-center gap-2">
-        <div className="p-1.5 bg-primary/10 rounded-md">
-          <Scissors className="w-5 h-5 text-primary" />
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onToggleSidebar}
+          className={`text-gray-400 hover:text-gray-200 ${!isSidebarOpen ? 'text-primary' : ''}`}
+          title={isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
+        >
+          <PanelLeft className="w-5 h-5" />
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 bg-primary/10 rounded-md">
+            <Scissors className="w-5 h-5 text-primary" />
+          </div>
+          <h1 className="font-semibold text-gray-100">{t('app.title')}</h1>
         </div>
-        <h1 className="font-semibold text-gray-100">{t('app.title')}</h1>
       </div>
       <div className="flex items-center gap-2">
         <Button 
