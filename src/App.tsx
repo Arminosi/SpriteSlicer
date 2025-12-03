@@ -72,10 +72,12 @@ const MainContent: React.FC = () => {
         accept="image/*"
         onChange={handleFileSelect}
       />
-      <Header />
+      <Header isSidebarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <div className={`transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${isSidebarOpen ? 'w-80 opacity-100' : 'w-0 opacity-0'}`}>
+          <Sidebar />
+        </div>
         
         <main className="flex-1 flex flex-col relative bg-grid-pattern">
           {file ? (
