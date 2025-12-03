@@ -7,11 +7,20 @@ import { useSlicer } from '../../context/SlicerContext';
 interface SortableItemProps {
   cell: Cell;
   imageUrl: string;
-  imageWidth: number;
-  imageHeight: number;
+  isSelected?: boolean;
+  onClick?: (e: React.MouseEvent, cell: Cell) => void;
+  onDoubleClick?: (e: React.MouseEvent, cell: Cell) => void;
+  onContextMenu?: (e: React.MouseEvent, cell: Cell) => void;
 }
 
-export const SortableItem: React.FC<SortableItemProps> = ({ cell, imageUrl, imageWidth, imageHeight }) => {
+export const SortableItem: React.FC<SortableItemProps> = ({ 
+  cell, 
+  imageUrl, 
+  isSelected,
+  onClick,
+  onDoubleClick,
+  onContextMenu 
+}) => {
   const { settings } = useSlicer();
   const {
     attributes,
@@ -22,19 +31,19 @@ export const SortableItem: React.FC<SortableItemProps> = ({ cell, imageUrl, imag
     isDragging
   } = useSortable({ id: cell.id });
 
-  const style = {
+  // Only use transition when not dragging for smooth reordering
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? undefined : (transition || 'transform 250ms ease'),
     zIndex: isDragging ? 999 : 'auto',
   };
 
   const { rows, cols, fontSize } = settings;
-  const cellWidth = imageWidth / cols;
-  const cellHeight = imageHeight / rows;
 
-  // Calculate background position based on original row/col
-  const bgX = cell.col * cellWidth;
-  const bgY = cell.row * cellHeight;
+  // Use percentage-based position that accounts for the cell's position in the grid
+  // This ensures each cell shows exactly its portion of the image without bleeding
+  const bgX = cols > 1 ? (cell.col / (cols - 1)) * 100 : 50;
+  const bgY = rows > 1 ? (cell.row / (rows - 1)) * 100 : 50;
 
   return (
     <div
@@ -42,24 +51,47 @@ export const SortableItem: React.FC<SortableItemProps> = ({ cell, imageUrl, imag
       style={style}
       {...attributes}
       {...listeners}
-      className={`relative group cursor-move select-none ${isDragging ? 'opacity-50' : ''}`}
+      onClick={(e) => onClick?.(e, cell)}
+      onDoubleClick={(e) => onDoubleClick?.(e, cell)}
+      onContextMenu={(e) => {
+        if (onContextMenu) {
+          e.preventDefault();
+          onContextMenu(e, cell);
+        }
+      }}
+      className={`relative group cursor-move select-none touch-manipulation h-full overflow-hidden
+        ${isDragging ? 'opacity-50' : ''}
+      `}
     >
       <div 
-        className="w-full h-full bg-no-repeat border border-gray-700/50 hover:border-primary/50 transition-colors"
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-          backgroundPosition: `-${bgX}px -${bgY}px`,
-          backgroundSize: `${imageWidth}px ${imageHeight}px`,
-          width: '100%',
-          paddingBottom: `${(cellHeight / cellWidth) * 100}%`, // Maintain aspect ratio
-        }}
-      />
+        className={`w-full h-full border transition-all duration-200 overflow-hidden
+          ${isSelected 
+            ? 'border-primary ring-2 ring-primary/50 z-10' 
+            : 'border-gray-700/50 hover:border-primary/50'
+          }
+        `}
+      >
+        {/* Inner container to clip the image precisely */}
+        <div 
+          className="w-full h-full bg-no-repeat"
+          style={{
+            backgroundImage: `url(${imageUrl})`,
+            backgroundPosition: `${bgX}% ${bgY}%`,
+            backgroundSize: `${cols * 100}% ${rows * 100}%`,
+            imageRendering: 'pixelated',
+            // Add a tiny inset to prevent sub-pixel bleeding at edges
+            margin: '-0.5px',
+            padding: '0.5px',
+            boxSizing: 'content-box',
+          }}
+        />
+      </div>
       
       {/* Overlay Number */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span 
           style={{ 
-            fontSize: `${Math.max(12, fontSize * 0.5)}px`, // Scale down font for preview
+            fontSize: `${Math.max(12, fontSize * 0.5)}px`,
             textShadow: '0 2px 4px rgba(0,0,0,0.8)'
           }}
           className="font-bold text-white"
