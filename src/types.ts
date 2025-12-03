@@ -1,6 +1,12 @@
 export type SortMode = 'normal' | 'snake-1' | 'snake-2' | 'reverse';
 export type Language = 'en' | 'zh';
 
+export interface GridPreset {
+  id: string;
+  rows: number;
+  cols: number;
+}
+
 export interface SlicerSettings {
   rows: number;
   cols: number;
@@ -22,6 +28,9 @@ export interface HistoryItem {
   fileName: string;
   settings: SlicerSettings;
   thumbnail?: string; // Base64 thumbnail
+  fileData?: File; // The original file
+  zipData?: Blob; // The sliced ZIP file
+  cellCount?: number; // Number of cells sliced
 }
 
 export interface SlicerState {

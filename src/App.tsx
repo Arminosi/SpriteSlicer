@@ -3,17 +3,17 @@ import { SlicerProvider, useSlicer } from './context/SlicerContext';
 import { Header } from './components/Layout/Header';
 import { Sidebar } from './components/Layout/Sidebar';
 import { DropZone } from './components/Slicer/DropZone';
-import { Preview } from './components/Slicer/Preview';
 import { SortablePreview } from './components/Slicer/SortablePreview';
 import { HistoryPanel } from './components/Slicer/HistoryPanel';
 import { Button } from './components/UI/Button';
-import { Download, Loader2, LayoutGrid, Move } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 import { sliceImage } from './utils/slicer';
 
 const MainContent: React.FC = () => {
   const { file, settings, addToHistory, setFile, t, cells } = useSlicer();
   const [isSlicing, setIsSlicing] = useState(false);
-  const [viewMode, setViewMode] = useState<'preview' | 'sort'>('preview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleSlice = async () => {
@@ -21,13 +21,15 @@ const MainContent: React.FC = () => {
     
     setIsSlicing(true);
     try {
-      await sliceImage(file, settings, cells);
+      const zipBlob = await sliceImage(file, settings, cells);
       
       addToHistory({
         id: Date.now().toString(),
         timestamp: Date.now(),
         fileName: file.name,
-        settings: { ...settings }
+        settings: { ...settings },
+        zipData: zipBlob,
+        cellCount: cells.length
       });
     } catch (error) {
       console.error('Slicing failed:', error);
@@ -71,38 +73,27 @@ const MainContent: React.FC = () => {
         accept="image/*"
         onChange={handleFileSelect}
       />
-      <Header />
+      <Header 
+        isSidebarOpen={isSidebarOpen} 
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        isHistoryOpen={isHistoryOpen}
+        onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
+      />
       
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <div className={`transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${isSidebarOpen ? 'w-80 opacity-100' : 'w-0 opacity-0'}`}>
+          <Sidebar />
+        </div>
         
         <main className="flex-1 flex flex-col relative bg-grid-pattern">
           {file ? (
             <>
               <div className="flex-1 flex overflow-hidden relative">
-                {viewMode === 'preview' ? <Preview /> : <SortablePreview />}
-                
-                {/* View Mode Toggle */}
-                <div className="absolute top-4 right-4 bg-surface/90 backdrop-blur border border-border rounded-lg p-1 flex gap-1 z-20">
-                  <button
-                    onClick={() => setViewMode('preview')}
-                    className={`p-2 rounded-md transition-colors ${viewMode === 'preview' ? 'bg-primary text-white' : 'text-gray-400 hover:text-gray-200 hover:bg-surface-hover'}`}
-                    title="Original View"
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('sort')}
-                    className={`p-2 rounded-md transition-colors ${viewMode === 'sort' ? 'bg-primary text-white' : 'text-gray-400 hover:text-gray-200 hover:bg-surface-hover'}`}
-                    title="Sort View"
-                  >
-                    <Move className="w-4 h-4" />
-                  </button>
-                </div>
+                <SortablePreview />
               </div>
               
               <div className="h-16 border-t border-border bg-surface/50 backdrop-blur flex items-center justify-between px-6 shrink-0 z-10">
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-gray-400 truncate min-w-0 flex-1 mr-4">
                   {file.name} ({(file.size / 1024).toFixed(1)} KB)
                 </div>
                 
@@ -110,17 +101,17 @@ const MainContent: React.FC = () => {
                   size="lg" 
                   onClick={handleSlice} 
                   disabled={isSlicing}
-                  className="shadow-lg shadow-primary/20"
+                  className="shadow-lg shadow-primary/20 shrink-0"
                 >
                   {isSlicing ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      {t('action.processing')}
+                      <Loader2 className="w-5 h-5 sm:mr-2 animate-spin" />
+                      <span className="hidden sm:inline">{t('action.processing')}</span>
                     </>
                   ) : (
                     <>
-                      <Download className="w-5 h-5 mr-2" />
-                      {t('action.slice')}
+                      <Download className="w-5 h-5 sm:mr-2" />
+                      <span className="hidden sm:inline">{t('action.slice')}</span>
                     </>
                   )}
                 </Button>
@@ -130,7 +121,7 @@ const MainContent: React.FC = () => {
             <DropZone />
           )}
           
-          <HistoryPanel />
+          <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
         </main>
       </div>
     </div>
