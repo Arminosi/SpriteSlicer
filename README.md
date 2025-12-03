@@ -20,6 +20,10 @@
   <a href="#-english-documentation">English</a>
 </p>
 
+<p align="center">
+  🌐 <strong>在线演示 | Live Demo:</strong> <a href="http://ss.qwq.team/" target="_blank">http://ss.qwq.team/</a>
+</p>
+
 ---
 
 ## 📖 中文文档
