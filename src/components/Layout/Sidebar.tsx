@@ -217,7 +217,7 @@ export const Sidebar: React.FC = () => {
               max={100}
               value={settings.fontSize}
               onChange={(e) => updateSettings({ fontSize: Number(e.target.value) })}
-              className="w-full h-2 bg-surface-hover rounded-lg appearance-none cursor-pointer accent-primary"
+              className="w-full h-2 bg-surface-hover rounded-lg appearance-none cursor-pointer accent-primary touch-none"
             />
           </div>
         </div>

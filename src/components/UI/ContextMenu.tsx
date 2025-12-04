@@ -6,6 +6,7 @@ interface ContextMenuAction {
   onClick: () => void;
   icon?: React.ReactNode;
   danger?: boolean;
+  keepOpen?: boolean;
 }
 
 interface ContextMenuProps {
@@ -68,9 +69,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
       {actions.map((action, index) => (
         <button
           key={index}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             action.onClick();
-            onClose();
+            if (!action.keepOpen) {
+              onClose();
+            }
           }}
           className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2 hover:bg-surface-hover transition-colors
             ${action.danger ? 'text-red-400 hover:bg-red-500/10' : 'text-gray-200'}
