@@ -29,6 +29,7 @@ export const SortablePreview: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const lastClickRef = React.useRef<{ id: string, time: number } | null>(null);
   
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -347,12 +348,12 @@ export const SortablePreview: React.FC = () => {
 
   return (
     <div 
-      className="flex-1 flex flex-col h-full overflow-hidden relative"
+      className="flex-1 flex flex-col h-full overflow-hidden relative min-h-0"
       onClick={() => setSelectedIds(new Set())} // Click background to deselect
     >
       <div 
         ref={containerRef}
-        className="flex-1 overflow-auto p-6 flex items-center justify-center min-h-0"
+        className="flex-1 overflow-auto p-6 flex min-h-0"
       >
         <DndContext
           sensors={sensors}
@@ -365,7 +366,7 @@ export const SortablePreview: React.FC = () => {
             strategy={rectSortingStrategy}
           >
             <div 
-              className="grid gap-1 shadow-2xl bg-surface/30 p-1 rounded-lg transition-all duration-200 ease-out"
+              className="grid gap-1 shadow-2xl bg-surface/30 p-1 rounded-lg transition-[width,height] duration-200 ease-out shrink-0 m-auto"
               style={{
                 gridTemplateColumns: `repeat(${settings.cols}, minmax(0, 1fr))`,
                 gridTemplateRows: `repeat(${settings.rows}, minmax(0, 1fr))`,
@@ -377,7 +378,7 @@ export const SortablePreview: React.FC = () => {
               {cells.map((cell) => (
                 <div 
                   key={cell.id} 
-                  className="transition-all duration-300 ease-out"
+                  className="transition-[transform,opacity] duration-300 ease-out"
                   style={{ 
                     width: '100%',
                     height: '100%',
@@ -409,7 +410,11 @@ export const SortablePreview: React.FC = () => {
         </div>
         
         {/* Zoom Controls */}
-        <div className="bg-black/50 backdrop-blur px-4 py-2 rounded-full flex items-center gap-3">
+        <div 
+          className="bg-black/50 backdrop-blur px-4 py-2 rounded-full flex items-center gap-3"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <button 
             onClick={() => setZoom(1)}
             className="text-gray-300 hover:text-white transition-colors" 
@@ -427,14 +432,16 @@ export const SortablePreview: React.FC = () => {
           <input 
             type="range" 
             min="0.5" 
-            max="3" 
+            max="2" 
             step="0.1" 
             value={zoom}
             onChange={(e) => setZoom(parseFloat(e.target.value))}
-            className="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary"
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary touch-none"
           />
           <button 
-            onClick={() => setZoom(z => Math.min(3, z + 0.1))}
+            onClick={() => setZoom(z => Math.min(2, z + 0.1))}
             className="text-gray-300 hover:text-white transition-colors"
           >
             <ZoomIn className="w-4 h-4" />
@@ -447,7 +454,10 @@ export const SortablePreview: React.FC = () => {
         <ContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
-          onClose={() => setContextMenu(null)}
+          onClose={() => {
+            setContextMenu(null);
+            setDeleteConfirm(false);
+          }}
           actions={[
             {
               label: selectedIds.size > 1 
@@ -457,10 +467,19 @@ export const SortablePreview: React.FC = () => {
               onClick: handleDownloadSlice
             },
             {
-              label: t('action.deleteSelected'),
+              label: deleteConfirm ? t('history.confirmDelete') : t('action.deleteSelected'),
               icon: <Trash2 className="w-4 h-4" />,
               danger: true,
-              onClick: handleDeleteSelected
+              keepOpen: !deleteConfirm,
+              onClick: () => {
+                if (deleteConfirm) {
+                  handleDeleteSelected();
+                  setContextMenu(null);
+                  setDeleteConfirm(false);
+                } else {
+                  setDeleteConfirm(true);
+                }
+              }
             }
           ]}
         />

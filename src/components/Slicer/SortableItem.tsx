@@ -34,7 +34,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
   // Only use transition when not dragging for smooth reordering
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? undefined : (transition || 'transform 250ms ease'),
+    transition,
     zIndex: isDragging ? 999 : 'auto',
   };
 

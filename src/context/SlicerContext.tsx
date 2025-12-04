@@ -261,6 +261,18 @@ export const SlicerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (rowDiff !== 0) return rowDiff;
         return b.col - a.col;
       });
+    } else if (sortMode === 'vertical') {
+      sortedCells.sort((a, b) => {
+        const colDiff = a.col - b.col;
+        if (colDiff !== 0) return colDiff;
+        return a.row - b.row;
+      });
+    } else if (sortMode === 'vertical-reverse') {
+      sortedCells.sort((a, b) => {
+        const colDiff = b.col - a.col;
+        if (colDiff !== 0) return colDiff;
+        return b.row - a.row;
+      });
     }
 
     // Assign display IDs

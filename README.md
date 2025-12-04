@@ -30,16 +30,27 @@
 
 ### ✨ 功能特性
 
-- 🖼️ **智能切割** - 支持按行列数切割精灵图，自动检测网格
-- 🎯 **自动检测** - 智能识别精灵图网格，支持灵敏度调节 (1-10)
-- 🔄 **拖拽排序** - 支持拖拽重新排列切片顺序
-- ✅ **多选操作** - 支持 Ctrl/Shift 多选，批量删除或导出
-- ↩️ **撤销重做** - 完整的操作历史记录，支持回滚
-- 📦 **批量导出** - 支持单张下载或打包为 ZIP 文件
-- 💾 **预设保存** - 保存常用的行列配置，快速切换
-- 🌐 **双语支持** - 中文/英文界面切换
-- 📱 **响应式设计** - 完美支持桌面和移动设备
-- ⌨️ **快捷键支持** - Delete 删除、Ctrl+Z 撤销、Ctrl+Y 重做
+#### ✂️ 核心切割
+- **智能切割** - 支持按行列数切割精灵图，自动检测网格
+- **自动检测** - 智能识别精灵图网格，支持灵敏度调节 (1-10)
+- **预设保存** - 保存常用的行列配置，快速切换
+
+#### 🎨 编辑与排序
+- **拖拽排序** - 支持拖拽重新排列切片顺序
+- **高级排序** - 内置蛇形、纵向、倒序等多种自动排序模式
+- **智能编号** - 支持自定义起始序号和字体大小，直观显示切片顺序
+- **多选操作** - 支持 Ctrl/Shift 多选，批量删除或导出
+
+#### ⏱️ 工作流与历史
+- **撤销重做** - 完整的操作历史记录，支持回滚
+- **历史回溯** - 自动保存处理记录，支持预览、下载原图及一键恢复
+- **批量导出** - 支持单张下载或打包为 ZIP 文件
+
+#### 🛠️ 系统体验
+- **隐私安全** - 纯本地处理，数据不上传服务器
+- **双语支持** - 中文/英文界面切换
+- **响应式设计** - 完美支持桌面和移动设备
+- **快捷键支持** - Delete 删除、Ctrl+Z 撤销、Ctrl+Y 重做
 
 ### 🚀 快速开始
 
@@ -99,16 +110,27 @@ npm run preview
 
 ### ✨ Features
 
-- 🖼️ **Smart Slicing** - Slice sprite sheets by rows and columns with auto-detection
-- 🎯 **Auto Detection** - Intelligent grid detection with adjustable sensitivity (1-10)
-- 🔄 **Drag & Drop** - Reorder slices by dragging
-- ✅ **Multi-Select** - Ctrl/Shift click for batch selection, delete or export
-- ↩️ **Undo/Redo** - Complete operation history with rollback support
-- 📦 **Batch Export** - Download individual images or export as ZIP
-- 💾 **Presets** - Save frequently used row/column configurations
-- 🌐 **Bilingual** - Chinese/English interface switching
-- 📱 **Responsive** - Perfect support for desktop and mobile devices
-- ⌨️ **Keyboard Shortcuts** - Delete, Ctrl+Z undo, Ctrl+Y redo
+#### ✂️ Core Slicing
+- **Smart Slicing** - Slice sprite sheets by rows and columns with auto-detection
+- **Auto Detection** - Intelligent grid detection with adjustable sensitivity (1-10)
+- **Presets** - Save frequently used row/column configurations
+
+#### 🎨 Editing & Sorting
+- **Drag & Drop** - Reorder slices by dragging
+- **Advanced Sorting** - Built-in Snake, Vertical, Reverse and other auto-sort modes
+- **Smart Numbering** - Custom start index and font size for slice visualization
+- **Multi-Select** - Ctrl/Shift click for batch selection, delete or export
+
+#### ⏱️ Workflow & History
+- **Undo/Redo** - Complete operation history with rollback support
+- **History Management** - Auto-save history with preview, original download and restore support
+- **Batch Export** - Download individual images or export as ZIP
+
+#### 🛠️ System & Experience
+- **Privacy First** - Local processing only, no data uploaded to servers
+- **Bilingual** - Chinese/English interface switching
+- **Responsive** - Perfect support for desktop and mobile devices
+- **Keyboard Shortcuts** - Delete, Ctrl+Z undo, Ctrl+Y redo
 
 ### 🚀 Quick Start
 

@@ -8,12 +8,25 @@ interface TooltipProps {
 
 export const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number; align: 'center' | 'left' | 'right' }>({ x: 0, y: 0, align: 'center' });
+  const [position, setPosition] = useState<{ 
+    x: number; 
+    y: number; 
+    align: 'center' | 'left' | 'right';
+    placement: 'top' | 'bottom';
+  }>({ x: 0, y: 0, align: 'center', placement: 'top' });
 
   const handleMouseEnter = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    
+    // Vertical positioning logic
+    // If element is too close to top (< 50px), show tooltip below
+    const spaceTop = rect.top;
+    const placement = spaceTop > 50 ? 'top' : 'bottom';
+
+    // Horizontal positioning logic
     const isLeftEdge = rect.left < 100;
-    const isRightEdge = window.innerWidth - rect.right < 100;
+    const isRightEdge = viewportWidth - rect.right < 100;
     
     let x = rect.left + rect.width / 2;
     let align: 'center' | 'left' | 'right' = 'center';
@@ -28,8 +41,9 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
 
     setPosition({
       x,
-      y: rect.top,
-      align
+      y: placement === 'top' ? rect.top : rect.bottom,
+      align,
+      placement
     });
     setIsVisible(true);
   };
@@ -55,20 +69,24 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
           className="fixed z-[9999] pointer-events-none transition-all duration-200"
           style={{ 
             left: position.x, 
-            top: position.y - 8,
-            transform: position.align === 'left' 
-              ? 'translate(0, -100%)' 
-              : position.align === 'right'
-                ? 'translate(-100%, -100%)'
-                : 'translate(-50%, -100%)'
+            top: position.placement === 'top' ? position.y - 8 : position.y + 8,
+            transform: `translate(${
+              position.align === 'left' ? '0' : position.align === 'right' ? '-100%' : '-50%'
+            }, ${
+              position.placement === 'top' ? '-100%' : '0'
+            })`
           }}
         >
-          <div className="bg-gray-900/95 backdrop-blur-sm text-primary text-xs font-bold px-3 py-2 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-primary/50 text-center leading-tight whitespace-nowrap tracking-wide">
+          <div className="bg-gray-900/95 backdrop-blur-sm text-primary text-xs font-bold px-3 py-2 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-primary/50 text-center leading-tight whitespace-nowrap">
             {content}
           </div>
           {/* Arrow */}
           <div 
-            className="w-1.5 h-1.5 bg-gray-900 border-r border-b border-primary/50 transform rotate-45 absolute -bottom-[3.5px]"
+            className={`w-1.5 h-1.5 bg-gray-900 border-primary/50 transform rotate-45 absolute ${
+              position.placement === 'top' 
+                ? '-bottom-[3.5px] border-r border-b' 
+                : '-top-[3.5px] border-l border-t'
+            }`}
             style={{
               left: position.align === 'left' 
                 ? '20px' 

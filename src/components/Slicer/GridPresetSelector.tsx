@@ -209,7 +209,7 @@ export const GridPresetSelector: React.FC = () => {
 
               {gridPresets.length === 0 && (
                 <div className="text-center py-3 text-gray-500 text-xs">
-                  No presets yet
+                  {t('settings.noPresets')}
                 </div>
               )}
             </div>

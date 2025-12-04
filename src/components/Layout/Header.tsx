@@ -29,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="h-14 border-b border-border bg-background/50 backdrop-blur-sm flex items-center px-4 justify-between shrink-0 z-10">
       <div className="flex items-center gap-4">
-        <Tooltip content={isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
+        <Tooltip content={isSidebarOpen ? t('action.hideSidebar') : t('action.showSidebar')}>
           <Button
             variant="ghost"
             size="sm"
@@ -44,7 +44,9 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="p-1.5 bg-primary/10 rounded-md">
             <Scissors className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="font-semibold text-gray-100 hidden sm:block">{t('app.title')}</h1>
+          <h1 className="font-semibold text-gray-100 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap max-w-0 opacity-0 sm:max-w-[200px] sm:opacity-100">
+            {t('app.title')}
+          </h1>
         </div>
       </div>
 
@@ -110,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
           </Button>
         </Tooltip>
 
-        <Tooltip content={language === 'en' ? 'Switch to Chinese' : '切换到英文'}>
+        <Tooltip content={t('action.switchLang')}>
           <Button 
             variant="ghost" 
             size="sm" 

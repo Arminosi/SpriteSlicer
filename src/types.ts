@@ -1,4 +1,4 @@
-export type SortMode = 'normal' | 'snake-1' | 'snake-2' | 'reverse';
+export type SortMode = 'normal' | 'snake-1' | 'snake-2' | 'reverse' | 'vertical' | 'vertical-reverse';
 export type Language = 'en' | 'zh';
 
 export interface GridPreset {

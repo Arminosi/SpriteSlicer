@@ -81,6 +81,83 @@ export const sliceImage = async (
   });
 };
 
+export const sliceImageDirectly = async (
+  file: File,
+  settings: SlicerSettings,
+  cells: Cell[],
+  onProgress?: (progress: number) => void
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = async () => {
+      try {
+        const { rows, cols } = settings;
+        const cellWidth = img.width / cols;
+        const cellHeight = img.height / rows;
+        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        canvas.width = cellWidth;
+        canvas.height = cellHeight;
+
+        let processed = 0;
+        const total = cells.length;
+
+        for (const cell of cells) {
+            // Clear canvas
+            ctx.clearRect(0, 0, cellWidth, cellHeight);
+            
+            // Draw slice based on original row/col
+            ctx.drawImage(
+              img,
+              cell.col * cellWidth, cell.row * cellHeight, cellWidth, cellHeight, // Source
+              0, 0, cellWidth, cellHeight // Destination
+            );
+
+            // Get blob
+            const id = cell.displayId;
+            const blob = await new Promise<Blob | null>(resolveBlob => 
+              canvas.toBlob(resolveBlob, file.type, 0.9)
+            );
+            
+            if (blob) {
+              const ext = file.name.split('.').pop() || 'png';
+              const fileName = `${file.name.split('.')[0]}_${id}.${ext}`;
+              saveAs(blob, fileName);
+              
+              // Small delay to prevent browser throttling
+              await new Promise(r => setTimeout(r, 100));
+            }
+
+            processed++;
+            if (onProgress) onProgress((processed / total) * 100);
+        }
+        
+        URL.revokeObjectURL(url);
+        resolve();
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load image'));
+    };
+
+    img.src = url;
+  });
+};
+
 export const downloadMultipleSlices = async (
   file: File,
   settings: SlicerSettings,
