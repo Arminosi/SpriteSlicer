@@ -88,7 +88,7 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background text-gray-200 overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-background text-gray-200 overflow-hidden">
       <input
         type="file"
         ref={fileInputRef}
