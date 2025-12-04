@@ -6,7 +6,7 @@ import { DropZone } from './components/Slicer/DropZone';
 import { SortablePreview } from './components/Slicer/SortablePreview';
 import { HistoryPanel } from './components/Slicer/HistoryPanel';
 import { Button } from './components/UI/Button';
-import { Download, Loader2, ChevronDown, FileImage, FolderArchive } from 'lucide-react';
+import { Loader2, ChevronDown, FileImage, FolderArchive } from 'lucide-react';
 import { sliceImage, sliceImageDirectly } from './utils/slicer';
 
 const MainContent: React.FC = () => {

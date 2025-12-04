@@ -18,7 +18,6 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
   const handleMouseEnter = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
     
     // Vertical positioning logic
     // If element is too close to top (< 50px), show tooltip below
@@ -78,7 +77,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
             })`
           }}
         >
-          <div className="bg-gray-900/95 backdrop-blur-sm text-primary text-xs font-bold px-3 py-2 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-primary/50 text-center leading-tight max-w-[200px] break-words">
+          <div className="bg-gray-900/95 backdrop-blur-sm text-primary text-xs font-bold px-3 py-2 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-primary/50 text-center leading-tight whitespace-nowrap">
             {content}
           </div>
           {/* Arrow */}
