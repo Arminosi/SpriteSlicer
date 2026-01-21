@@ -1,0 +1,52 @@
+name: Deploy Vite Project
+
+on:
+  push:
+    branches: ["main"] # 如果你的主分支叫 master，请改为 master
+
+# 设置权限以允许部署到 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 确保同一时间只有一个部署任务在运行，避免冲突
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm' # 开启 npm 缓存，大幅缩短后续构建时间
+
+      - name: Install dependencies
+        run: npm install
+
+      # 如果你在 vite.config.js 中使用了 GEMINI_API_KEY 环境变量，
+      # 请在 GitHub 仓库 Settings > Secrets > Actions 中添加对应的 Secret
+      - name: Build
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 注意：Vite 默认输出文件夹是 dist
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
